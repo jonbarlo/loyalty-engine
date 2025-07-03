@@ -33,4 +33,31 @@ describe('PunchCardController', () => {
   it('should allow getMine to return only user punch cards', async () => {
     // ...mock and test logic...
   });
+  it('should get a punch card by id', async () => {
+    (PunchCard.findByPk as jest.Mock).mockResolvedValue({ id: 1 });
+    const res = await request(app).get('/punch-cards/1').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+  });
+  it('should return 404 if punch card not found', async () => {
+    (PunchCard.findByPk as jest.Mock).mockResolvedValue(null);
+    const res = await request(app).get('/punch-cards/999').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(404);
+  });
+  it('should create a punch card', async () => {
+    (PunchCard.create as jest.Mock).mockResolvedValue({ id: 1 });
+    const res = await request(app).post('/punch-cards').set('Authorization', 'Bearer mocked.jwt.token').send({ rewardProgramId: 1 });
+    expect(res.status).toBe(201);
+  });
+  it('should update a punch card', async () => {
+    const mockPunchCard = { update: jest.fn().mockResolvedValue({ id: 1 }), id: 1 };
+    (PunchCard.findByPk as jest.Mock).mockResolvedValue(mockPunchCard);
+    const res = await request(app).put('/punch-cards/1').set('Authorization', 'Bearer mocked.jwt.token').send({ punches: 5 });
+    expect(res.status).toBe(200);
+  });
+  it('should delete a punch card', async () => {
+    const mockPunchCard = { destroy: jest.fn().mockResolvedValue(true), id: 1 };
+    (PunchCard.findByPk as jest.Mock).mockResolvedValue(mockPunchCard);
+    const res = await request(app).delete('/punch-cards/1').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+  });
 }); 

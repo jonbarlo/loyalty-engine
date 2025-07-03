@@ -22,4 +22,31 @@ describe('NotificationController', () => {
   it('should allow getMine to return only user notifications', async () => {
     // ...mock and test logic...
   });
+  it('should get a notification by id', async () => {
+    (Notification.findByPk as jest.Mock).mockResolvedValue({ id: 1 });
+    const res = await request(app).get('/notifications/1').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+  });
+  it('should return 404 if notification not found', async () => {
+    (Notification.findByPk as jest.Mock).mockResolvedValue(null);
+    const res = await request(app).get('/notifications/999').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(404);
+  });
+  it('should create a notification', async () => {
+    (Notification.create as jest.Mock).mockResolvedValue({ id: 1 });
+    const res = await request(app).post('/notifications').set('Authorization', 'Bearer mocked.jwt.token').send({ userId: 1, businessId: 1, message: 'Test', type: 'info' });
+    expect(res.status).toBe(201);
+  });
+  it('should update a notification', async () => {
+    const mockNotification = { update: jest.fn().mockResolvedValue({ id: 1 }), id: 1 };
+    (Notification.findByPk as jest.Mock).mockResolvedValue(mockNotification);
+    const res = await request(app).put('/notifications/1').set('Authorization', 'Bearer mocked.jwt.token').send({ message: 'Updated' });
+    expect(res.status).toBe(200);
+  });
+  it('should delete a notification', async () => {
+    const mockNotification = { destroy: jest.fn().mockResolvedValue(true), id: 1 };
+    (Notification.findByPk as jest.Mock).mockResolvedValue(mockNotification);
+    const res = await request(app).delete('/notifications/1').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+  });
 }); 
