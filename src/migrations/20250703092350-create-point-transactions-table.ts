@@ -12,19 +12,19 @@ export default {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'users', key: 'id' },
-        onDelete: 'CASCADE',
+        onDelete: 'NO ACTION',
       },
       businessId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'businesses', key: 'id' },
-        onDelete: 'CASCADE',
+        onDelete: 'NO ACTION',
       },
       rewardProgramId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'reward_programs', key: 'id' },
-        onDelete: 'CASCADE',
+        onDelete: 'NO ACTION',
       },
       points: {
         type: DataTypes.INTEGER,
@@ -40,13 +40,11 @@ export default {
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        type: DataTypes.DATEONLY,
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        type: DataTypes.DATEONLY,
       }
     });
   },

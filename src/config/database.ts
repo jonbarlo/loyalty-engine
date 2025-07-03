@@ -9,14 +9,20 @@ const env = config.env;
 
 const dbConfigs = {
   development: {
-    username: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD || 'password',
-    database: process.env.DB_NAME || 'nodejs_api_dev',
+    username: process.env.DB_USERNAME || 'sa',
+    password: process.env.DB_PASSWORD || 'YourStrong@Passw0rd',
+    database: process.env.DB_NAME || 'loyalty_engine_dev',
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '3306'),
-    dialect: 'mysql' as const,
+    port: parseInt(process.env.DB_PORT || '1433'),
+    dialect: 'mssql' as const,
     dialectOptions: {
-      charset: 'utf8mb4',
+      options: {
+        encrypt: false,
+        trustServerCertificate: true,
+        enableArithAbort: true,
+        requestTimeout: 30000,
+        connectionTimeout: 30000,
+      },
     },
     logging: console.log,
     pool: {
@@ -27,14 +33,20 @@ const dbConfigs = {
     }
   },
   test: {
-    username: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD || 'password',
-    database: process.env.DB_NAME_TEST || 'nodejs_api_test',
+    username: process.env.DB_USERNAME || 'sa',
+    password: process.env.DB_PASSWORD || 'YourStrong@Passw0rd',
+    database: process.env.DB_NAME_TEST || 'loyalty_engine_test',
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '3306'),
-    dialect: 'mysql' as const,
+    port: parseInt(process.env.DB_PORT || '1433'),
+    dialect: 'mssql' as const,
     dialectOptions: {
-      charset: 'utf8mb4',
+      options: {
+        encrypt: false,
+        trustServerCertificate: true,
+        enableArithAbort: true,
+        requestTimeout: 30000,
+        connectionTimeout: 30000,
+      },
     },
     logging: false,
     pool: {
@@ -58,9 +70,20 @@ const dbConfigs = {
         enableArithAbort: true,
         requestTimeout: 30000,
         connectionTimeout: 30000,
-        // Add these for better MSSQL compatibility
-        useUTC: false,
-        dateStrings: true,
+      },
+      // Map DATE to DATETIME2 instead of DATETIMEOFFSET
+      typeValidation: false,
+    },
+    define: {
+      timestamps: true,
+      // Force DATETIME2 instead of DATETIMEOFFSET
+      createdAt: {
+        type: 'DATETIME2',
+        allowNull: false,
+      },
+      updatedAt: {
+        type: 'DATETIME2',
+        allowNull: false,
       },
     },
     logging: false,
@@ -69,11 +92,6 @@ const dbConfigs = {
       min: 0,
       acquire: 30000,
       idle: 10000
-    },
-    // Add retry configuration for production
-    retry: {
-      max: 3,
-      timeout: 10000
     }
   }
 };
@@ -137,7 +155,6 @@ const sequelize = new Sequelize(
     dialectOptions: dbConfig.dialectOptions,
     logging: dbConfig.logging,
     pool: dbConfig.pool,
-    ...(('retry' in dbConfig) && { retry: (dbConfig as any).retry }),
   }
 );
 
