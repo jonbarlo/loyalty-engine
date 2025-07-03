@@ -4,12 +4,12 @@ export default {
   up: async (queryInterface: QueryInterface) => {
     await queryInterface.createTable('reward_programs', {
       id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
       businessId: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'businesses', key: 'id' },
         onDelete: 'NO ACTION',

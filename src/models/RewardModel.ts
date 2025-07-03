@@ -34,17 +34,17 @@ class Reward extends Model<RewardAttributes, RewardCreationAttributes> implement
 Reward.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     businessId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: 'businesses', key: 'id' },
     },
     rewardProgramId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: 'reward_programs', key: 'id' },
     },
@@ -61,7 +61,7 @@ Reward.init(
       allowNull: false,
     },
     value: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     isActive: {

@@ -22,8 +22,40 @@ import rewardRouter from './routes/rewards';
 import notificationRouter from './routes/notifications';
 import swaggerUi from 'swagger-ui-express';
 import * as fs from 'fs';
-const openApiSpec = JSON.parse(fs.readFileSync('./openapi.json', 'utf8'));
-//import { UserController } from './controllers/userController';
+
+// Load OpenAPI spec if available, otherwise use a basic one
+let openApiSpec;
+try {
+  const openApiPath = path.resolve(process.cwd(), 'openapi.json');
+  if (fs.existsSync(openApiPath)) {
+    openApiSpec = JSON.parse(fs.readFileSync(openApiPath, 'utf8'));
+    logger('OpenAPI spec loaded successfully');
+  } else {
+    // Fallback basic OpenAPI spec
+    openApiSpec = {
+      openapi: "3.0.0",
+      info: {
+        title: "Loyalty Engine API",
+        version: "1.0.0",
+        description: "API documentation for the Loyalty Engine MVP."
+      },
+      paths: {}
+    };
+    logger('OpenAPI spec not found, using fallback');
+  }
+} catch (error) {
+  logger(`Error loading OpenAPI spec: ${error}`);
+  // Fallback basic OpenAPI spec
+  openApiSpec = {
+    openapi: "3.0.0",
+    info: {
+      title: "Loyalty Engine API",
+      version: "1.0.0",
+      description: "API documentation for the Loyalty Engine MVP."
+    },
+    paths: {}
+  };
+}
 
 logger(`Environment variables loaded from ${envPath}`);
 logger(`Environment Loaded: ${config.NODE_ENV}`);

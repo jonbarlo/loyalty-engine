@@ -30,17 +30,17 @@ class Notification extends Model<NotificationAttributes, NotificationCreationAtt
 Notification.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     userId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: 'users', key: 'id' },
     },
     businessId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: 'businesses', key: 'id' },
     },

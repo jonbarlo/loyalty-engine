@@ -47,12 +47,12 @@ class RewardProgram extends Model<RewardProgramAttributes, RewardProgramCreation
 RewardProgram.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     businessId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: 'businesses', key: 'id' },
     },
