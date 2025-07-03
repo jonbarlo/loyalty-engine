@@ -1,21 +1,19 @@
+const authenticateToken = jest.fn((req: any, res: any, next: any) => {
+  req.user = {
+    userId: 1,
+    email: 'test@example.com',
+    role: 'business_owner',
+    businessId: 1
+  };
+  next();
+});
+jest.mock('../middleware/auth', () => ({ authenticateToken }));
 import request from 'supertest';
 import app from '../index';
 import PunchCard from '../models/PunchCardModel';
 import RewardProgram from '../models/RewardProgramModel';
-
 jest.mock('../models/PunchCardModel');
 jest.mock('../models/RewardProgramModel');
-jest.mock('../middleware/auth', () => ({
-  authenticateToken: (req, res, next) => {
-    req.user = {
-      userId: 1,
-      email: 'test@example.com',
-      role: 'business_owner', // Change per test for RBAC
-      businessId: 1
-    };
-    next();
-  }
-}));
 
 describe('PunchCardController', () => {
   // Add tests for RBAC, punch limit, redeem logic, and getMine endpoint
@@ -23,9 +21,8 @@ describe('PunchCardController', () => {
     // ...mock and test logic...
   });
   it('should only allow customers to view their own punch cards', async () => {
-    // Override the mock to simulate a customer
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 42,
         email: 'customer@example.com',
@@ -37,7 +34,7 @@ describe('PunchCardController', () => {
     (PunchCard.findAll as jest.Mock).mockResolvedValue([{ id: 1, userId: 42 }]);
     const res = await request(app).get('/punch-cards').set('Authorization', 'Bearer mocked.jwt.token');
     expect(res.status).toBe(200);
-    expect(res.body.every(card => card.userId === 42)).toBe(true);
+    expect(res.body.every((card: any) => card.userId === 42)).toBe(true);
   });
   it('should not allow earning a punch if card is full', async () => {
     const mockPunchCard = { id: 1, userId: 2, rewardProgramId: 3, punches: 10, redeemed: false, save: jest.fn() };
@@ -87,7 +84,7 @@ describe('PunchCardController', () => {
   });
   it('should allow admin to view all punch cards', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 99,
         email: 'admin@example.com',

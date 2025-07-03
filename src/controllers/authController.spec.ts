@@ -62,9 +62,12 @@ describe('AuthController', () => {
             expect(UserService.userExists).toHaveBeenCalledWith(userData.email);
             expect(bcrypt.hash).toHaveBeenCalledWith(userData.password, 10);
             expect(UserService.createUser).toHaveBeenCalledWith({
+                businessId: 1,
                 name: userData.name,
                 email: userData.email,
-                password: 'hashedPassword'
+                passwordHash: 'hashedPassword',
+                role: 'customer',
+                isActive: true
             });
             expect(jwt.sign).toHaveBeenCalled();
             expect(mockStatus).toHaveBeenCalledWith(201);
@@ -114,29 +117,22 @@ describe('AuthController', () => {
             
             const mockUser = {
                 id: 1,
-                name: 'Test User',
                 email: loginData.email,
-                password: 'hashedPassword',
-                get: jest.fn((field: string) => {
-                    const data: any = {
-                        id: 1,
-                        name: 'Test User',
-                        email: loginData.email,
-                        password: 'hashedPassword'
-                    };
-                    return data[field];
-                }),
-                toJSON: () => ({
-                    id: 1,
-                    name: 'Test User',
-                    email: loginData.email,
-                    password: 'hashedPassword'
-                })
+                passwordHash: 'hashedPassword',
+                get: (key: string) => {
+                    if (key === 'id') return 1;
+                    if (key === 'email') return loginData.email;
+                    if (key === 'role') return 'customer';
+                    if (key === 'businessId') return 1;
+                    if (key === 'passwordHash') return 'hashedPassword';
+                    return undefined;
+                },
+                toJSON: () => ({ id: 1, email: loginData.email, name: 'Test User', businessId: 1, role: 'customer', isActive: true })
             };
             
             (UserService.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
             (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-            (jwt.sign as jest.Mock).mockReturnValue('mockToken');
+            (jwt.sign as jest.Mock).mockReturnValue('mocked.jwt.token');
 
             // Act
             await AuthController.login(mockRequest as Request, mockResponse as Response, jest.fn());
@@ -149,10 +145,13 @@ describe('AuthController', () => {
                 message: 'Login successful',
                 user: {
                     id: 1,
+                    email: loginData.email,
                     name: 'Test User',
-                    email: loginData.email
+                    businessId: 1,
+                    role: 'customer',
+                    isActive: true
                 },
-                token: 'mockToken'
+                token: 'mocked.jwt.token'
             });
         });
 

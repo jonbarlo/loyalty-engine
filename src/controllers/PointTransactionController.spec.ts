@@ -1,19 +1,17 @@
+const authenticateToken = jest.fn((req: any, res: any, next: any) => {
+  req.user = {
+    userId: 1,
+    email: 'test@example.com',
+    role: 'business_owner',
+    businessId: 1
+  };
+  next();
+});
+jest.mock('../middleware/auth', () => ({ authenticateToken }));
 import request from 'supertest';
 import app from '../index';
 import PointTransaction from '../models/PointTransactionModel';
-
 jest.mock('../models/PointTransactionModel');
-jest.mock('../middleware/auth', () => ({
-  authenticateToken: (req, res, next) => {
-    req.user = {
-      userId: 1,
-      email: 'test@example.com',
-      role: 'business_owner', // Change per test for RBAC
-      businessId: 1
-    };
-    next();
-  }
-}));
 
 describe('PointTransactionController', () => {
   // Add tests for RBAC, spendPoints logic, and getMine endpoint
@@ -22,7 +20,7 @@ describe('PointTransactionController', () => {
   });
   it('should only allow customers to view their own transactions', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 42,
         email: 'customer@example.com',
@@ -34,7 +32,7 @@ describe('PointTransactionController', () => {
     (PointTransaction.findAll as jest.Mock).mockResolvedValue([{ id: 1, userId: 42 }]);
     const res = await request(app).get('/point-transactions').set('Authorization', 'Bearer mocked.jwt.token');
     expect(res.status).toBe(200);
-    expect(res.body.every(tx => tx.userId === 42)).toBe(true);
+    expect(res.body.every((tx: any) => tx.userId === 42)).toBe(true);
   });
   it('should not allow spending more points than user has', async () => {
     // ...mock and test logic...
@@ -54,7 +52,13 @@ describe('PointTransactionController', () => {
   });
   it('should create a point transaction', async () => {
     (PointTransaction.create as jest.Mock).mockResolvedValue({ id: 1 });
-    const res = await request(app).post('/point-transactions').set('Authorization', 'Bearer mocked.jwt.token').send({ rewardProgramId: 1, points: 10, type: 'earn' });
+    const res = await request(app).post('/point-transactions').set('Authorization', 'Bearer mocked.jwt.token').send({ 
+      userId: 1, 
+      businessId: 1, 
+      rewardProgramId: 1, 
+      points: 10, 
+      type: 'earn' 
+    });
     expect(res.status).toBe(201);
   });
   it('should update a point transaction', async () => {
@@ -71,7 +75,7 @@ describe('PointTransactionController', () => {
   });
   it('should allow admin to view all point transactions', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 99,
         email: 'admin@example.com',

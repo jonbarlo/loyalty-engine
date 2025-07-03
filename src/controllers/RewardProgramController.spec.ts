@@ -1,19 +1,17 @@
+const authenticateToken = jest.fn((req: any, res: any, next: any) => {
+  req.user = {
+    userId: 1,
+    email: 'test@example.com',
+    role: 'business_owner',
+    businessId: 1
+  };
+  next();
+});
+jest.mock('../middleware/auth', () => ({ authenticateToken }));
 import request from 'supertest';
 import app from '../index';
 import RewardProgram from '../models/RewardProgramModel';
-
 jest.mock('../models/RewardProgramModel');
-jest.mock('../middleware/auth', () => ({
-  authenticateToken: (req, res, next) => {
-    req.user = {
-      userId: 1,
-      email: 'test@example.com',
-      role: 'business_owner', // Change per test for RBAC
-      businessId: 1
-    };
-    next();
-  }
-}));
 
 describe('RewardProgramController', () => {
   // Add tests for RBAC and getAll filtering
@@ -42,20 +40,28 @@ describe('RewardProgramController', () => {
     expect(res.status).toBe(201);
   });
   it('should update a reward program', async () => {
-    const mockProgram = { update: jest.fn().mockResolvedValue({ id: 1 }), id: 1 };
+    const mockProgram = { 
+      update: jest.fn().mockResolvedValue({ id: 1 }), 
+      id: 1,
+      businessId: 1  // Match the user's businessId
+    };
     (RewardProgram.findByPk as jest.Mock).mockResolvedValue(mockProgram);
     const res = await request(app).put('/reward-programs/1').set('Authorization', 'Bearer mocked.jwt.token').send({ name: 'Updated' });
     expect(res.status).toBe(200);
   });
   it('should delete a reward program', async () => {
-    const mockProgram = { destroy: jest.fn().mockResolvedValue(true), id: 1 };
+    const mockProgram = { 
+      destroy: jest.fn().mockResolvedValue(true), 
+      id: 1,
+      businessId: 1  // Match the user's businessId
+    };
     (RewardProgram.findByPk as jest.Mock).mockResolvedValue(mockProgram);
     const res = await request(app).delete('/reward-programs/1').set('Authorization', 'Bearer mocked.jwt.token');
     expect(res.status).toBe(200);
   });
   it('should not allow customers to create reward programs', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 42,
         email: 'customer@example.com',
@@ -69,7 +75,7 @@ describe('RewardProgramController', () => {
   });
   it('should allow admin to view all reward programs', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 99,
         email: 'admin@example.com',
@@ -88,7 +94,7 @@ describe('RewardProgramController', () => {
   });
   it('should not allow business_owner to update another business reward program', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 2,
         email: 'owner@example.com',

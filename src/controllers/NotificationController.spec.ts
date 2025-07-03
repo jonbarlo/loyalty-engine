@@ -1,19 +1,17 @@
+const authenticateToken = jest.fn((req: any, res: any, next: any) => {
+  req.user = {
+    userId: 1,
+    email: 'test@example.com',
+    role: 'business_owner',
+    businessId: 1
+  };
+  next();
+});
+jest.mock('../middleware/auth', () => ({ authenticateToken }));
 import request from 'supertest';
 import app from '../index';
 import Notification from '../models/NotificationModel';
-
 jest.mock('../models/NotificationModel');
-jest.mock('../middleware/auth', () => ({
-  authenticateToken: (req, res, next) => {
-    req.user = {
-      userId: 1,
-      email: 'test@example.com',
-      role: 'business_owner', // Change per test for RBAC
-      businessId: 1
-    };
-    next();
-  }
-}));
 
 describe('NotificationController', () => {
   // Add tests for markAsRead, getMine, and RBAC
@@ -62,7 +60,7 @@ describe('NotificationController', () => {
   });
   it('should only allow customers to view their own notifications', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 42,
         email: 'customer@example.com',
@@ -74,11 +72,11 @@ describe('NotificationController', () => {
     (Notification.findAll as jest.Mock).mockResolvedValue([{ id: 1, userId: 42 }]);
     const res = await request(app).get('/notifications').set('Authorization', 'Bearer mocked.jwt.token');
     expect(res.status).toBe(200);
-    expect(res.body.every(n => n.userId === 42)).toBe(true);
+    expect(res.body.every((n: any) => n.userId === 42)).toBe(true);
   });
   it('should allow admin to view all notifications', async () => {
     const { authenticateToken } = require('../middleware/auth');
-    authenticateToken.mockImplementationOnce((req, res, next) => {
+    authenticateToken.mockImplementationOnce((req: any, res: any, next: any) => {
       req.user = {
         userId: 99,
         email: 'admin@example.com',
