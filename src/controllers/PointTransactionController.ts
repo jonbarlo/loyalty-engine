@@ -124,4 +124,16 @@ export class PointTransactionController {
             res.status(500).json({ error: 'Internal server error' });
         }
     };
+
+    public static getMine: RequestHandler = async (req, res) => {
+        try {
+            // @ts-ignore
+            const { userId } = req.user || {};
+            const transactions = await PointTransaction.findAll({ where: { userId } });
+            res.json(transactions);
+        } catch (error) {
+            logger(`Error getting my point transactions: ${error}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
 } 

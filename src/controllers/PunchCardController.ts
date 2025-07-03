@@ -159,4 +159,16 @@ export class PunchCardController {
             res.status(500).json({ error: 'Internal server error' });
         }
     };
+
+    public static getMine: RequestHandler = async (req, res) => {
+        try {
+            // @ts-ignore
+            const { userId } = req.user || {};
+            const punchCards = await PunchCard.findAll({ where: { userId } });
+            res.json(punchCards);
+        } catch (error) {
+            logger(`Error getting my punch cards: ${error}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
 } 

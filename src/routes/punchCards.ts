@@ -11,5 +11,6 @@ punchCardRouter.put('/punch-cards/:id', authenticateToken, PunchCardController.u
 punchCardRouter.delete('/punch-cards/:id', authenticateToken, PunchCardController.delete);
 punchCardRouter.post('/punch-cards/:id/earn', authenticateToken, PunchCardController.earnPunch);
 punchCardRouter.post('/punch-cards/:id/redeem', authenticateToken, PunchCardController.redeem);
+punchCardRouter.get('/my-punch-cards', authenticateToken, PunchCardController.getMine);
 
 export default punchCardRouter; 

@@ -5,7 +5,14 @@ import { logger } from '../utils/logger';
 export class RewardController {
     public static getAll: RequestHandler = async (req, res) => {
         try {
-            const rewards = await Reward.findAll();
+            // @ts-ignore
+            const { role, businessId } = req.user || {};
+            let rewards;
+            if (role === 'business_owner') {
+                rewards = await Reward.findAll({ where: { businessId } });
+            } else {
+                rewards = await Reward.findAll();
+            }
             res.json(rewards);
         } catch (error) {
             logger(`Error getting rewards: ${error}`);
@@ -30,7 +37,13 @@ export class RewardController {
 
     public static create: RequestHandler = async (req, res) => {
         try {
-            const { businessId, rewardProgramId, name, description, type, value, isActive } = req.body;
+            // @ts-ignore
+            const { role, businessId } = req.user || {};
+            if (role !== 'business_owner') {
+                res.status(403).json({ error: 'Only business owners can create rewards' });
+                return;
+            }
+            const { rewardProgramId, name, description, type, value, isActive } = req.body;
             if (!businessId || !rewardProgramId || !name || !type || value === undefined) {
                 res.status(400).json({ error: 'businessId, rewardProgramId, name, type, and value are required' });
                 return;
@@ -46,9 +59,15 @@ export class RewardController {
     public static update: RequestHandler = async (req, res) => {
         try {
             const { id } = req.params;
+            // @ts-ignore
+            const { role, businessId } = req.user || {};
             const reward = await Reward.findByPk(id);
             if (!reward) {
                 res.status(404).json({ error: 'Reward not found' });
+                return;
+            }
+            if (role !== 'business_owner' || reward.businessId !== businessId) {
+                res.status(403).json({ error: 'Only the business owner can update this reward' });
                 return;
             }
             const { name, description, type, value, isActive } = req.body;
@@ -63,9 +82,15 @@ export class RewardController {
     public static delete: RequestHandler = async (req, res) => {
         try {
             const { id } = req.params;
+            // @ts-ignore
+            const { role, businessId } = req.user || {};
             const reward = await Reward.findByPk(id);
             if (!reward) {
                 res.status(404).json({ error: 'Reward not found' });
+                return;
+            }
+            if (role !== 'business_owner' || reward.businessId !== businessId) {
+                res.status(403).json({ error: 'Only the business owner can delete this reward' });
                 return;
             }
             await reward.destroy();

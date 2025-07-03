@@ -5,7 +5,9 @@ import { logger } from '../utils/logger';
 export class NotificationController {
     public static getAll: RequestHandler = async (req, res) => {
         try {
-            const notifications = await Notification.findAll();
+            // @ts-ignore
+            const { userId } = req.user || {};
+            const notifications = await Notification.findAll({ where: { userId } });
             res.json(notifications);
         } catch (error) {
             logger(`Error getting notifications: ${error}`);
@@ -72,6 +74,41 @@ export class NotificationController {
             res.json({ message: 'Notification deleted successfully' });
         } catch (error) {
             logger(`Error deleting notification: ${error}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
+    public static markAsRead: RequestHandler = async (req, res) => {
+        try {
+            const { id } = req.params;
+            // @ts-ignore
+            const { userId } = req.user || {};
+            const notification = await Notification.findByPk(id);
+            if (!notification) {
+                res.status(404).json({ error: 'Notification not found' });
+                return;
+            }
+            if (notification.userId !== userId) {
+                res.status(403).json({ error: 'Forbidden' });
+                return;
+            }
+            notification.isRead = true;
+            await notification.save();
+            res.json(notification);
+        } catch (error) {
+            logger(`Error marking notification as read: ${error}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
+    public static getMine: RequestHandler = async (req, res) => {
+        try {
+            // @ts-ignore
+            const { userId } = req.user || {};
+            const notifications = await Notification.findAll({ where: { userId } });
+            res.json(notifications);
+        } catch (error) {
+            logger(`Error getting my notifications: ${error}`);
             res.status(500).json({ error: 'Internal server error' });
         }
     };

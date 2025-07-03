@@ -20,6 +20,9 @@ import punchCardRouter from './routes/punchCards';
 import pointTransactionRouter from './routes/pointTransactions';
 import rewardRouter from './routes/rewards';
 import notificationRouter from './routes/notifications';
+import swaggerUi from 'swagger-ui-express';
+import * as fs from 'fs';
+const openApiSpec = JSON.parse(fs.readFileSync('./openapi.json', 'utf8'));
 //import { UserController } from './controllers/userController';
 
 logger(`Environment variables loaded from ${envPath}`);
@@ -93,6 +96,7 @@ app.use(punchCardRouter);
 app.use(pointTransactionRouter);
 app.use(rewardRouter);
 app.use(notificationRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
 // Global error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

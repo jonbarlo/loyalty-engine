@@ -11,5 +11,6 @@ pointTransactionRouter.put('/point-transactions/:id', authenticateToken, PointTr
 pointTransactionRouter.delete('/point-transactions/:id', authenticateToken, PointTransactionController.delete);
 pointTransactionRouter.post('/point-transactions/earn', authenticateToken, PointTransactionController.earnPoints);
 pointTransactionRouter.post('/point-transactions/spend', authenticateToken, PointTransactionController.spendPoints);
+pointTransactionRouter.get('/my-point-transactions', authenticateToken, PointTransactionController.getMine);
 
 export default pointTransactionRouter; 

@@ -9,5 +9,7 @@ notificationRouter.get('/notifications/:id', authenticateToken, NotificationCont
 notificationRouter.post('/notifications', authenticateToken, NotificationController.create);
 notificationRouter.put('/notifications/:id', authenticateToken, NotificationController.update);
 notificationRouter.delete('/notifications/:id', authenticateToken, NotificationController.delete);
+notificationRouter.patch('/notifications/:id/read', authenticateToken, NotificationController.markAsRead);
+notificationRouter.get('/my-notifications', authenticateToken, NotificationController.getMine);
 
 export default notificationRouter; 
