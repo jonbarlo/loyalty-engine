@@ -127,17 +127,17 @@ Current working directory: ${process.cwd()}`;
 }
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'nodejs_api_dev',
-  process.env.DB_USERNAME || 'root',
-  process.env.DB_PASSWORD || '',
+  dbConfig.database || 'nodejs_api_dev',
+  dbConfig.username || 'root',
+  dbConfig.password || '',
   {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '3306'),
-    dialect: 'mysql', // This is correct for MariaDB
-    dialectOptions: {
-      charset: 'utf8mb4',
-    },
-    logging: false,
+    host: dbConfig.host || 'localhost',
+    port: dbConfig.port || 3306,
+    dialect: dbConfig.dialect,
+    dialectOptions: dbConfig.dialectOptions,
+    logging: dbConfig.logging,
+    pool: dbConfig.pool,
+    ...(('retry' in dbConfig) && { retry: (dbConfig as any).retry }),
   }
 );
 
