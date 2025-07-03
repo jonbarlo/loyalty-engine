@@ -4,7 +4,7 @@ export default {
   up: async (queryInterface: QueryInterface) => {
     await queryInterface.createTable('businesses', {
       id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },

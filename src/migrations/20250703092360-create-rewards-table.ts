@@ -4,18 +4,18 @@ export default {
   up: async (queryInterface: QueryInterface) => {
     await queryInterface.createTable('rewards', {
       id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
       businessId: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'businesses', key: 'id' },
         onDelete: 'CASCADE',
       },
       rewardProgramId: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'reward_programs', key: 'id' },
         onDelete: 'CASCADE',
@@ -33,13 +33,13 @@ export default {
         allowNull: false,
       },
       value: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true,
+        defaultValue: 1,
       },
       createdAt: {
         allowNull: false,

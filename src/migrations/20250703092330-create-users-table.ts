@@ -7,10 +7,10 @@ export default {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER.UNSIGNED
+        type: DataTypes.INTEGER
       },
       businessId: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'businesses', key: 'id' },
         onDelete: 'CASCADE',
@@ -36,7 +36,7 @@ export default {
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true,
+        defaultValue: 1,
       },
       createdAt: {
         allowNull: false,
