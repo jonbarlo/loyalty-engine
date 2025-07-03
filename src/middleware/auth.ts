@@ -8,6 +8,8 @@ interface AuthRequest extends Request {
     user?: {
         userId: number;
         email: string;
+        role: string;
+        businessId: number;
     };
 }
 
@@ -22,7 +24,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string; role: string; businessId: number };
         req.user = decoded;
         logger(`Authentication successful for user: ${decoded.email}`);
         next();

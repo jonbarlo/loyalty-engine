@@ -9,5 +9,6 @@ userRouter.get('/users/:id', authenticateToken, UserController.getUserById);
 userRouter.post('/users', authenticateToken, UserController.createUser);
 userRouter.put('/users/:id', authenticateToken, UserController.updateUser);
 userRouter.delete('/users/:id', authenticateToken, UserController.deleteUser);
+userRouter.get('/me', authenticateToken, UserController.getMe);
 
 export default userRouter;

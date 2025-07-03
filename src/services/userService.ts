@@ -1,7 +1,7 @@
-import UserModel, { UserAttributes, UserCreationAttributes } from '../models/UserModel';
+import UserModel, { UserCreationAttributes } from '../models/UserModel';
 import bcrypt from 'bcryptjs';
 
-export type UserWithoutPassword = Omit<UserAttributes, 'password'>;
+export type UserWithoutPassword = Omit<UserCreationAttributes, 'passwordHash'>;
 
 export class UserService {
   /**
@@ -9,13 +9,13 @@ export class UserService {
    */
   static async getAllUsers(): Promise<UserWithoutPassword[]> {
     const users = await UserModel.findAll({
-      attributes: { exclude: ['password'] },
+      attributes: { exclude: ['passwordHash'] },
       order: [['createdAt', 'DESC']],
     });
     return users.map((user: UserModel) => {
       const userData = user.toJSON();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...userWithoutPassword } = userData;
+      const { passwordHash, ...userWithoutPassword } = userData;
       return userWithoutPassword as UserWithoutPassword;
     });
   }
@@ -25,12 +25,12 @@ export class UserService {
    */
   static async getUserById(id: number): Promise<UserWithoutPassword | null> {
     const user = await UserModel.findByPk(id, {
-      attributes: { exclude: ['password'] },
+      attributes: { exclude: ['passwordHash'] },
     });
     if (!user) return null;
     const userData = user.toJSON();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = userData;
+    const { passwordHash, ...userWithoutPassword } = userData;
     return userWithoutPassword as UserWithoutPassword;
   }
 
@@ -49,29 +49,24 @@ export class UserService {
   static async createUser(userData: UserCreationAttributes): Promise<UserWithoutPassword> {
     const user = await UserModel.create(userData);
     const userDataJson = user.toJSON();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = userDataJson;
+    const { passwordHash, ...userWithoutPassword } = userDataJson;
     return userWithoutPassword as UserWithoutPassword;
   }
 
   /**
    * Update user by ID
    */
-  static async updateUser(id: number, updateData: Partial<UserAttributes>): Promise<UserWithoutPassword | null> {
+  static async updateUser(id: number, updateData: Partial<UserCreationAttributes>): Promise<UserWithoutPassword | null> {
     const user = await UserModel.findByPk(id);
     if (!user) {
       return null;
     }
-
-    // If password is being updated, hash it
-    if (updateData.password) {
-      updateData.password = await bcrypt.hash(updateData.password, 10);
+    if (updateData.passwordHash) {
+      updateData.passwordHash = await bcrypt.hash(updateData.passwordHash, 10);
     }
-
     await user.update(updateData);
     const userData = user.toJSON();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = userData;
+    const { passwordHash, ...userWithoutPassword } = userData;
     return userWithoutPassword as UserWithoutPassword;
   }
 

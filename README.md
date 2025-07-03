@@ -168,6 +168,9 @@ npm run test:coverage
 
 ## API Endpoints
 
+### Health
+- `GET /health` - Returns API status and environment (useful for monitoring)
+
 ### Authentication
 - `POST /auth/register` - Register a new user
 - `POST /auth/login` - Login user
@@ -382,3 +385,20 @@ For support and questions:
 ---
 
 **Happy Coding!**
+
+## Production Deployment
+
+- **Production URL:** [https://loyalty-engine-production.up.railway.app](https://loyalty-engine-production.up.railway.app)
+- **Health Check:**
+  - Endpoint: `GET /health`
+  - Example response:
+    ```json
+    {
+      "status": "OK",
+      "message": "API is running",
+      "environment": "production",
+      "timestamp": "2025-07-03T09:04:18.811Z"
+    }
+    ```
+
+---

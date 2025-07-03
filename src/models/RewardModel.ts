@@ -1,37 +1,37 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
 
-export type UserRole = 'customer' | 'business_owner' | 'admin';
+export type RewardType = 'free_item' | 'discount' | 'custom';
 
-interface UserAttributes {
+interface RewardAttributes {
   id: number;
   businessId: number;
-  email: string;
-  passwordHash: string;
+  rewardProgramId: number;
   name: string;
-  role: UserRole;
+  description?: string;
+  type: RewardType;
+  value: number;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+interface RewardCreationAttributes extends Optional<RewardAttributes, 'id'> {}
 
-export type { UserAttributes, UserCreationAttributes };
-
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+class Reward extends Model<RewardAttributes, RewardCreationAttributes> implements RewardAttributes {
   public id!: number;
   public businessId!: number;
-  public email!: string;
-  public passwordHash!: string;
+  public rewardProgramId!: number;
   public name!: string;
-  public role!: UserRole;
+  public description?: string;
+  public type!: RewardType;
+  public value!: number;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-User.init(
+Reward.init(
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -43,23 +43,26 @@ User.init(
       allowNull: false,
       references: { model: 'businesses', key: 'id' },
     },
-    email: {
-      type: DataTypes.STRING,
+    rewardProgramId: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
-      unique: true,
-    },
-    passwordHash: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      references: { model: 'reward_programs', key: 'id' },
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
-      type: DataTypes.ENUM('customer', 'business_owner', 'admin'),
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    type: {
+      type: DataTypes.ENUM('free_item', 'discount', 'custom'),
       allowNull: false,
-      defaultValue: 'customer',
+    },
+    value: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
@@ -69,10 +72,10 @@ User.init(
   },
   {
     sequelize,
-    modelName: 'User',
-    tableName: 'users',
+    modelName: 'Reward',
+    tableName: 'rewards',
     timestamps: true,
   }
 );
 
-export default User; 
+export default Reward; 

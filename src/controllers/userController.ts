@@ -1,6 +1,7 @@
 import { Request, Response, RequestHandler } from 'express';
 import { logger } from '../utils/logger';
 import { UserService } from '../services/userService';
+import bcrypt from 'bcryptjs';
 
 export class UserController {
 
@@ -51,7 +52,7 @@ export class UserController {
     // Create new user
     public static createUser: RequestHandler = async (req: Request, res: Response) => {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password, businessId } = req.body;
 
             // Validate input
             if (!name || !email || !password) {
@@ -71,7 +72,15 @@ export class UserController {
             }
 
             logger('API endpoint POST /users was called...');
-            const newUser = await UserService.createUser({ name, email, password });
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newUser = await UserService.createUser({
+                businessId: businessId || 1,
+                role: 'customer',
+                isActive: true,
+                name,
+                email,
+                passwordHash: hashedPassword
+            });
             res.status(201).json(newUser);
         } catch (error) {
             logger(`Error creating user: ${error}`);
@@ -151,6 +160,28 @@ export class UserController {
             res.json({ message: 'User deleted successfully' });
         } catch (error) {
             logger(`Error deleting user: ${error}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
+    // Get current authenticated user
+    public static getMe: RequestHandler = async (req: Request, res: Response) => {
+        try {
+            // req.user is set by authenticateToken middleware
+            // @ts-ignore
+            const userId = req.user?.userId;
+            if (!userId) {
+                res.status(401).json({ error: 'Unauthorized' });
+                return;
+            }
+            const user = await UserService.getUserById(userId);
+            if (!user) {
+                res.status(404).json({ error: 'User not found' });
+                return;
+            }
+            res.json(user);
+        } catch (error) {
+            logger(`Error in getMe: ${error}`);
             res.status(500).json({ error: 'Internal server error' });
         }
     };

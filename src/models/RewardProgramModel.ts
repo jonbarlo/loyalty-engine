@@ -1,37 +1,35 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
 
-export type UserRole = 'customer' | 'business_owner' | 'admin';
+export type RewardProgramType = 'punch_card' | 'points';
 
-interface UserAttributes {
+interface RewardProgramAttributes {
   id: number;
   businessId: number;
-  email: string;
-  passwordHash: string;
+  type: RewardProgramType;
   name: string;
-  role: UserRole;
+  description?: string;
+  config: object;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+interface RewardProgramCreationAttributes extends Optional<RewardProgramAttributes, 'id'> {}
 
-export type { UserAttributes, UserCreationAttributes };
-
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+class RewardProgram extends Model<RewardProgramAttributes, RewardProgramCreationAttributes> implements RewardProgramAttributes {
   public id!: number;
   public businessId!: number;
-  public email!: string;
-  public passwordHash!: string;
+  public type!: RewardProgramType;
   public name!: string;
-  public role!: UserRole;
+  public description?: string;
+  public config!: object;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-User.init(
+RewardProgram.init(
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
@@ -43,23 +41,21 @@ User.init(
       allowNull: false,
       references: { model: 'businesses', key: 'id' },
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    passwordHash: {
-      type: DataTypes.STRING,
+    type: {
+      type: DataTypes.ENUM('punch_card', 'points'),
       allowNull: false,
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
-      type: DataTypes.ENUM('customer', 'business_owner', 'admin'),
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    config: {
+      type: DataTypes.JSON,
       allowNull: false,
-      defaultValue: 'customer',
     },
     isActive: {
       type: DataTypes.BOOLEAN,
@@ -69,10 +65,10 @@ User.init(
   },
   {
     sequelize,
-    modelName: 'User',
-    tableName: 'users',
+    modelName: 'RewardProgram',
+    tableName: 'reward_programs',
     timestamps: true,
   }
 );
 
-export default User; 
+export default RewardProgram; 

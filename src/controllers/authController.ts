@@ -36,14 +36,17 @@ export class AuthController {
 
             // Create user
             const newUser = await UserService.createUser({
+                businessId: req.body.businessId || 1, // Default businessId
+                role: 'customer',
+                isActive: true,
                 name,
                 email,
-                password: hashedPassword
+                passwordHash: hashedPassword
             });
 
             // Generate JWT token
             const token = jwt.sign(
-                { userId: newUser.id, email: newUser.email },
+                { userId: newUser.id, email: newUser.email, role: newUser.role, businessId: newUser.businessId },
                 JWT_SECRET,
                 { expiresIn: '24h' }
             );
@@ -84,7 +87,7 @@ export class AuthController {
             }
 
             // Verify password
-            const isValidPassword = await bcrypt.compare(password, user.get('password') as string);
+            const isValidPassword = await bcrypt.compare(password, user.get('passwordHash') as string);
             if (!isValidPassword) {
                 res.status(401).json({ 
                     error: 'Invalid email or password' 
@@ -94,7 +97,7 @@ export class AuthController {
 
             // Generate JWT token
             const token = jwt.sign(
-                { userId: user.get('id') as number, email: user.get('email') as string },
+                { userId: user.get('id') as number, email: user.get('email') as string, role: user.get('role') as string, businessId: user.get('businessId') as number },
                 JWT_SECRET,
                 { expiresIn: '24h' }
             );
@@ -102,7 +105,7 @@ export class AuthController {
             // Return user data without password
             const userData = user.toJSON();
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { password: _, ...userWithoutPassword } = userData;
+            const { passwordHash: _, ...userWithoutPassword } = userData;
 
             res.json({
                 message: 'Login successful',

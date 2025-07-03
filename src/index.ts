@@ -10,10 +10,16 @@ dotenv.config({ path: envPath });
 import express from 'express';
 import cors from 'cors';
 import { logger } from './utils/logger';
-import { sequelize } from './config/database';
+import sequelize from './config/database';
 import userRouter from './routes/users';
 import itemRouter from './routes/items';
 import authRouter from './routes/auth';
+import businessRouter from './routes/businesses';
+import rewardProgramRouter from './routes/rewardPrograms';
+import punchCardRouter from './routes/punchCards';
+import pointTransactionRouter from './routes/pointTransactions';
+import rewardRouter from './routes/rewards';
+import notificationRouter from './routes/notifications';
 //import { UserController } from './controllers/userController';
 
 logger(`Environment variables loaded from ${envPath}`);
@@ -81,6 +87,12 @@ app.get('/test', (req, res) => {
 app.use('/auth', authRouter);
 app.use(userRouter);
 app.use(itemRouter);
+app.use(businessRouter);
+app.use(rewardProgramRouter);
+app.use(punchCardRouter);
+app.use(pointTransactionRouter);
+app.use(rewardRouter);
+app.use(notificationRouter);
 
 // Global error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
