@@ -55,7 +55,7 @@ async function seed() {
     type: 'punch_card',
     name: 'Buy 10, Get 1 Free',
     description: 'Get a free drink after 10 purchases.',
-    config: { punchesRequired: 10 },
+    config: JSON.stringify({ punchesRequired: 10 }),
     isActive: true,
   });
   const pointsProgram = await RewardProgram.create({
@@ -63,7 +63,7 @@ async function seed() {
     type: 'points',
     name: 'Starbucks Points',
     description: 'Earn 1 point per $1. 100 points = free drink.',
-    config: { earnRate: 1, spendThreshold: 100 },
+    config: JSON.stringify({ earnRate: 1, spendThreshold: 100 }),
     isActive: true,
   });
 

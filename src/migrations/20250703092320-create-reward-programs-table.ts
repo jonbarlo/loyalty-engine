@@ -27,7 +27,7 @@ export default {
         allowNull: true,
       },
       config: {
-        type: DataTypes.JSON,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       isActive: {

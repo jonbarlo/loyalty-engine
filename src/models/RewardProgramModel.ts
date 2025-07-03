@@ -9,7 +9,7 @@ interface RewardProgramAttributes {
   type: RewardProgramType;
   name: string;
   description?: string;
-  config: object;
+  config: string; // Store as string in database
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -23,10 +23,25 @@ class RewardProgram extends Model<RewardProgramAttributes, RewardProgramCreation
   public type!: RewardProgramType;
   public name!: string;
   public description?: string;
-  public config!: object;
+  public config!: string; // Store as string in database
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  // Getter for config - converts TEXT to object
+  get configData(): object {
+    try {
+      return JSON.parse(this.config);
+    } catch (error) {
+      console.error('Error parsing config JSON:', error);
+      return {};
+    }
+  }
+
+  // Setter for config - converts object to TEXT
+  set configData(value: object) {
+    this.config = JSON.stringify(value);
+  }
 }
 
 RewardProgram.init(
@@ -54,7 +69,7 @@ RewardProgram.init(
       allowNull: true,
     },
     config: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     isActive: {
