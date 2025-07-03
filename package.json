@@ -15,6 +15,7 @@
     "migrate:undo": "ts-node src/scripts/migrate-undo.ts",
     "migrate:create": "ts-node src/scripts/create-migration.ts",
     "deploy:mochahost": "ts-node src/scripts/deploy-mochahost.ts",
+    "postman": "ts-node src/scripts/convert-to-postman.ts",
     "test": "jest"
   },
   "repository": {

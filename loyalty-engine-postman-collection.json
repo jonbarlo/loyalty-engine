@@ -1,0 +1,644 @@
+{
+	"info": {
+		"_postman_id": "5e7c244e-089c-4e05-a5a9-c41ec9ca2375",
+		"name": "Loyalty Engine API",
+		"description": "API documentation for the Loyalty Engine MVP.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8201938"
+	},
+	"item": [
+		{
+			"name": "Swagger UI",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api-docs",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api-docs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"bearer_token\", jsonData.token);\r",
+							"console.log(\"Login successful, bearer_token saved and cached already into the environment variable bearer_token\");\r",
+							"pm.expect(jsonData.token).to.not.be.undefined;"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"jonathan@506software.com\",\n  \"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Jonathan Barquero\",\n  \"email\": \"jonathan@506software.com\",\n  \"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current authenticated user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List punch cards (RBAC)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/punch-cards",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"punch-cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create punch card",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rewardProgramId\": 1,\n  \"punches\": 1,\n  \"redeemed\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/punch-cards",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"punch-cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get my punch cards",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/my-punch-cards",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"my-punch-cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List point transactions (RBAC)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/point-transactions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"point-transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create point transaction",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rewardProgramId\": 1,\n  \"points\": 1,\n  \"type\": \"sample_string\",\n  \"description\": \"sample_string\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/point-transactions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"point-transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get my point transactions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/my-point-transactions",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"my-point-transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List rewards (RBAC)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/rewards",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"rewards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create reward",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rewardProgramId\": 1,\n  \"name\": \"sample_string\",\n  \"description\": \"sample_string\",\n  \"type\": \"sample_string\",\n  \"value\": 1,\n  \"isActive\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/rewards",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"rewards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List reward programs (RBAC)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/reward-programs",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"reward-programs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create reward program",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\": \"sample_string\",\n  \"name\": \"sample_string\",\n  \"description\": \"sample_string\",\n  \"config\": {},\n  \"isActive\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/reward-programs",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"reward-programs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List notifications (RBAC)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notifications",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get my notifications",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/my-notifications",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"my-notifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mark notification as read",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notifications/{id}/read",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notifications",
+						"{id}",
+						"read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get punch card by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/punch-cards/{id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"punch-cards",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update punch card",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rewardProgramId\": 1,\n  \"punches\": 1,\n  \"redeemed\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/punch-cards/{id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"punch-cards",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete punch card",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/punch-cards/{id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"punch-cards",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Earn a punch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/punch-cards/{id}/earn",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"punch-cards",
+						"{id}",
+						"earn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Redeem a punch card",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearer_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/punch-cards/{id}/redeem",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"punch-cards",
+						"{id}",
+						"redeem"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3031",
+			"type": "string"
+		},
+		{
+			"key": "bearer_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
