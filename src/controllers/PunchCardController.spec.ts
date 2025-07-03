@@ -5,6 +5,17 @@ import RewardProgram from '../models/RewardProgramModel';
 
 jest.mock('../models/PunchCardModel');
 jest.mock('../models/RewardProgramModel');
+jest.mock('../middleware/auth', () => ({
+  authenticateToken: (req, res, next) => {
+    req.user = {
+      userId: 1,
+      email: 'test@example.com',
+      role: 'business_owner', // Change per test for RBAC
+      businessId: 1
+    };
+    next();
+  }
+}));
 
 describe('PunchCardController', () => {
   // Add tests for RBAC, punch limit, redeem logic, and getMine endpoint
@@ -12,7 +23,21 @@ describe('PunchCardController', () => {
     // ...mock and test logic...
   });
   it('should only allow customers to view their own punch cards', async () => {
-    // ...mock and test logic...
+    // Override the mock to simulate a customer
+    const { authenticateToken } = require('../middleware/auth');
+    authenticateToken.mockImplementationOnce((req, res, next) => {
+      req.user = {
+        userId: 42,
+        email: 'customer@example.com',
+        role: 'customer',
+        businessId: 1
+      };
+      next();
+    });
+    (PunchCard.findAll as jest.Mock).mockResolvedValue([{ id: 1, userId: 42 }]);
+    const res = await request(app).get('/punch-cards').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+    expect(res.body.every(card => card.userId === 42)).toBe(true);
   });
   it('should not allow earning a punch if card is full', async () => {
     const mockPunchCard = { id: 1, userId: 2, rewardProgramId: 3, punches: 10, redeemed: false, save: jest.fn() };
@@ -59,5 +84,24 @@ describe('PunchCardController', () => {
     (PunchCard.findByPk as jest.Mock).mockResolvedValue(mockPunchCard);
     const res = await request(app).delete('/punch-cards/1').set('Authorization', 'Bearer mocked.jwt.token');
     expect(res.status).toBe(200);
+  });
+  it('should allow admin to view all punch cards', async () => {
+    const { authenticateToken } = require('../middleware/auth');
+    authenticateToken.mockImplementationOnce((req, res, next) => {
+      req.user = {
+        userId: 99,
+        email: 'admin@example.com',
+        role: 'admin',
+        businessId: 1
+      };
+      next();
+    });
+    (PunchCard.findAll as jest.Mock).mockResolvedValue([
+      { id: 1, userId: 42 },
+      { id: 2, userId: 43 }
+    ]);
+    const res = await request(app).get('/punch-cards').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(2);
   });
 }); 

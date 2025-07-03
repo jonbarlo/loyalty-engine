@@ -3,6 +3,17 @@ import app from '../index';
 import Notification from '../models/NotificationModel';
 
 jest.mock('../models/NotificationModel');
+jest.mock('../middleware/auth', () => ({
+  authenticateToken: (req, res, next) => {
+    req.user = {
+      userId: 1,
+      email: 'test@example.com',
+      role: 'business_owner', // Change per test for RBAC
+      businessId: 1
+    };
+    next();
+  }
+}));
 
 describe('NotificationController', () => {
   // Add tests for markAsRead, getMine, and RBAC
@@ -48,5 +59,40 @@ describe('NotificationController', () => {
     (Notification.findByPk as jest.Mock).mockResolvedValue(mockNotification);
     const res = await request(app).delete('/notifications/1').set('Authorization', 'Bearer mocked.jwt.token');
     expect(res.status).toBe(200);
+  });
+  it('should only allow customers to view their own notifications', async () => {
+    const { authenticateToken } = require('../middleware/auth');
+    authenticateToken.mockImplementationOnce((req, res, next) => {
+      req.user = {
+        userId: 42,
+        email: 'customer@example.com',
+        role: 'customer',
+        businessId: 1
+      };
+      next();
+    });
+    (Notification.findAll as jest.Mock).mockResolvedValue([{ id: 1, userId: 42 }]);
+    const res = await request(app).get('/notifications').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+    expect(res.body.every(n => n.userId === 42)).toBe(true);
+  });
+  it('should allow admin to view all notifications', async () => {
+    const { authenticateToken } = require('../middleware/auth');
+    authenticateToken.mockImplementationOnce((req, res, next) => {
+      req.user = {
+        userId: 99,
+        email: 'admin@example.com',
+        role: 'admin',
+        businessId: 1
+      };
+      next();
+    });
+    (Notification.findAll as jest.Mock).mockResolvedValue([
+      { id: 1, userId: 42 },
+      { id: 2, userId: 43 }
+    ]);
+    const res = await request(app).get('/notifications').set('Authorization', 'Bearer mocked.jwt.token');
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(2);
   });
 }); 
