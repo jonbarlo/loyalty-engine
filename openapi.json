@@ -1,0 +1,358 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Loyalty Engine API",
+    "version": "1.0.0",
+    "description": "API documentation for the Loyalty Engine MVP."
+  },
+  "servers": [
+    { "url": "http://localhost:3000", "description": "Local server" }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Authentication endpoints" },
+    { "name": "Users", "description": "User management" },
+    { "name": "Businesses", "description": "Business management" },
+    { "name": "RewardPrograms", "description": "Reward program management" },
+    { "name": "PunchCards", "description": "Punch card management" },
+    { "name": "PointTransactions", "description": "Point transaction management" },
+    { "name": "Rewards", "description": "Reward management" },
+    { "name": "Notifications", "description": "Notification management" }
+  ],
+  "paths": {
+    "/api-docs": {
+      "get": {
+        "summary": "Swagger UI",
+        "description": "View the API documentation in Swagger UI.",
+        "tags": ["Docs"],
+        "responses": {
+          "200": {
+            "description": "Swagger UI HTML"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "user": { "$ref": "#/components/schemas/User" },
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "409": { "description": "User already exists" }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get current authenticated user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user info",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/punch-cards": {
+      "get": {
+        "tags": ["PunchCards"],
+        "summary": "List punch cards (RBAC)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PunchCard" } } } } } }
+      },
+      "post": {
+        "tags": ["PunchCards"],
+        "summary": "Create punch card",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PunchCardCreate" } } } },
+        "responses": { "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PunchCard" } } } } }
+      }
+    },
+    "/my-punch-cards": {
+      "get": {
+        "tags": ["PunchCards"],
+        "summary": "Get my punch cards",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PunchCard" } } } } } }
+      }
+    },
+    "/point-transactions": {
+      "get": {
+        "tags": ["PointTransactions"],
+        "summary": "List point transactions (RBAC)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PointTransaction" } } } } } }
+      },
+      "post": {
+        "tags": ["PointTransactions"],
+        "summary": "Create point transaction",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PointTransactionCreate" } } } },
+        "responses": { "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PointTransaction" } } } } }
+      }
+    },
+    "/my-point-transactions": {
+      "get": {
+        "tags": ["PointTransactions"],
+        "summary": "Get my point transactions",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PointTransaction" } } } } } }
+      }
+    },
+    "/rewards": {
+      "get": {
+        "tags": ["Rewards"],
+        "summary": "List rewards (RBAC)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Reward" } } } } } }
+      },
+      "post": {
+        "tags": ["Rewards"],
+        "summary": "Create reward",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RewardCreate" } } } },
+        "responses": { "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Reward" } } } } }
+      }
+    },
+    "/reward-programs": {
+      "get": {
+        "tags": ["RewardPrograms"],
+        "summary": "List reward programs (RBAC)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/RewardProgram" } } } } } }
+      },
+      "post": {
+        "tags": ["RewardPrograms"],
+        "summary": "Create reward program",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RewardProgramCreate" } } } },
+        "responses": { "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RewardProgram" } } } } }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "List notifications (RBAC)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Notification" } } } } } }
+      }
+    },
+    "/my-notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get my notifications",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Notification" } } } } } }
+      }
+    },
+    "/notifications/{id}/read": {
+      "patch": {
+        "tags": ["Notifications"],
+        "summary": "Mark notification as read",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Marked as read", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Notification" } } } } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "businessId": { "type": "integer" },
+          "email": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "PunchCard": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "userId": { "type": "integer" },
+          "businessId": { "type": "integer" },
+          "rewardProgramId": { "type": "integer" },
+          "punches": { "type": "integer" },
+          "redeemed": { "type": "boolean" }
+        }
+      },
+      "PunchCardCreate": {
+        "type": "object",
+        "properties": {
+          "rewardProgramId": { "type": "integer" },
+          "punches": { "type": "integer" },
+          "redeemed": { "type": "boolean" }
+        },
+        "required": ["rewardProgramId"]
+      },
+      "PointTransaction": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "userId": { "type": "integer" },
+          "businessId": { "type": "integer" },
+          "rewardProgramId": { "type": "integer" },
+          "points": { "type": "integer" },
+          "type": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "PointTransactionCreate": {
+        "type": "object",
+        "properties": {
+          "rewardProgramId": { "type": "integer" },
+          "points": { "type": "integer" },
+          "type": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["rewardProgramId", "points", "type"]
+      },
+      "Reward": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "businessId": { "type": "integer" },
+          "rewardProgramId": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "type": "string" },
+          "value": { "type": "number" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "RewardCreate": {
+        "type": "object",
+        "properties": {
+          "rewardProgramId": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "type": "string" },
+          "value": { "type": "number" },
+          "isActive": { "type": "boolean" }
+        },
+        "required": ["rewardProgramId", "name", "type", "value"]
+      },
+      "RewardProgram": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "businessId": { "type": "integer" },
+          "type": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "config": { "type": "object" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "RewardProgramCreate": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "config": { "type": "object" },
+          "isActive": { "type": "boolean" }
+        },
+        "required": ["type", "name", "config"]
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "userId": { "type": "integer" },
+          "businessId": { "type": "integer" },
+          "message": { "type": "string" },
+          "type": { "type": "string" },
+          "isRead": { "type": "boolean" }
+        }
+      }
+    }
+  }
+} 

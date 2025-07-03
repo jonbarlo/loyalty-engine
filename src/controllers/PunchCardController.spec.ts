@@ -15,7 +15,17 @@ describe('PunchCardController', () => {
     // ...mock and test logic...
   });
   it('should not allow earning a punch if card is full', async () => {
-    // ...mock and test logic...
+    const mockPunchCard = { id: 1, userId: 2, rewardProgramId: 3, punches: 10, redeemed: false, save: jest.fn() };
+    const mockRewardProgram = { id: 3, config: { maxPunches: 10 } };
+    (PunchCard.findByPk as jest.Mock).mockResolvedValue(mockPunchCard);
+    (RewardProgram.findByPk as jest.Mock).mockResolvedValue(mockRewardProgram);
+    const token = 'mocked.jwt.token'; // Assume middleware is mocked or bypassed
+    const res = await request(app)
+      .post('/punch-cards/1/earn')
+      .set('Authorization', `Bearer ${token}`)
+      .send();
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/already full/);
   });
   it('should not allow redeem if not enough punches', async () => {
     // ...mock and test logic...
