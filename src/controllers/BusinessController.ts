@@ -75,4 +75,21 @@ export class BusinessController {
             res.status(500).json({ error: 'Internal server error' });
         }
     };
+
+    public static getPublicInfo: RequestHandler = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const business = await Business.findByPk(id, {
+                attributes: ['id', 'name', 'logoUrl'] // Only return basic public info
+            });
+            if (!business) {
+                res.status(404).json({ error: 'Business not found' });
+                return;
+            }
+            res.json(business);
+        } catch (error) {
+            logger(`Error getting public business info: ${error}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
 } 

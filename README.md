@@ -168,25 +168,10 @@ npm run test:coverage
 
 ## API Endpoints
 
-### Health
-- `GET /health` - Returns API status and environment (useful for monitoring)
-
-### Authentication
-- `POST /auth/register` - Register a new user
-- `POST /auth/login` - Login user
-
-### Users (Protected)
-- `GET /users` - Get all users
-- `GET /users/:id` - Get user by ID
-- `PUT /users/:id` - Update user
-- `DELETE /users/:id` - Delete user
-
-### Items (Protected)
-- `GET /items` - Get all items
-- `POST /items` - Create new item
-- `GET /items/:id` - Get item by ID
-- `PUT /items/:id` - Update item
-- `DELETE /items/:id` - Delete item
+🌐 Accessing the Documentation:
+Swagger UI: http://localhost:3031/api-docs
+OpenAPI JSON: http://localhost:3031/openapi.json
+Health Check: http://localhost:3031/health
 
 ## Development Workflow
 

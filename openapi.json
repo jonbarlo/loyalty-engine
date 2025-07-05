@@ -12,6 +12,7 @@
     { "name": "Auth", "description": "Authentication endpoints" },
     { "name": "Users", "description": "User management" },
     { "name": "Businesses", "description": "Business management" },
+    { "name": "Themes", "description": "Theme management" },
     { "name": "RewardPrograms", "description": "Reward program management" },
     { "name": "PunchCards", "description": "Punch card management" },
     { "name": "PointTransactions", "description": "Point transaction management" },
@@ -272,6 +273,222 @@
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
         "responses": { "200": { "description": "Redeemed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PunchCard" } } } }, "400": { "description": "Not enough punches or already redeemed" }, "404": { "description": "Not found" } }
       }
+    },
+    "/businesses/{id}/theme": {
+      "get": {
+        "tags": ["Themes"],
+        "summary": "Get theme for a business",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Theme object", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Theme" } } } },
+          "404": { "description": "Theme not found" }
+        }
+      },
+      "post": {
+        "tags": ["Themes"],
+        "summary": "Create or update theme for a business",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Theme" } } }
+        },
+        "responses": {
+          "201": { "description": "Theme created/updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Theme" } } } },
+          "400": { "description": "Validation error" },
+          "403": { "description": "Forbidden" }
+        }
+      },
+      "put": {
+        "tags": ["Themes"],
+        "summary": "Update theme for a business",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Theme" } } }
+        },
+        "responses": {
+          "200": { "description": "Theme updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Theme" } } } },
+          "400": { "description": "Validation error" },
+          "403": { "description": "Forbidden" }
+        }
+      },
+      "delete": {
+        "tags": ["Themes"],
+        "summary": "Delete theme for a business",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Theme deleted" },
+          "404": { "description": "Theme not found" },
+          "403": { "description": "Forbidden" }
+        }
+      }
+    },
+    "/themes/default": {
+      "get": {
+        "tags": ["Themes"],
+        "summary": "Get default theme template",
+        "responses": {
+          "200": { "description": "Default theme template", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Theme" } } } }
+        }
+      }
+    },
+    "/businesses": {
+      "get": {
+        "tags": ["Businesses"],
+        "summary": "List all businesses",
+        "responses": {
+          "200": {
+            "description": "List of businesses",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Business" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Businesses"],
+        "summary": "Create a new business",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "logoUrl": { "type": "string" },
+                  "primaryColor": { "type": "string" },
+                  "secondaryColor": { "type": "string" }
+                },
+                "required": ["name", "email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Business created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Business" }
+              }
+            }
+          },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/businesses/{id}": {
+      "get": {
+        "tags": ["Businesses"],
+        "summary": "Get a business by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business object",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Business" }
+              }
+            }
+          },
+          "404": { "description": "Business not found" }
+        }
+      },
+      "put": {
+        "tags": ["Businesses"],
+        "summary": "Update a business by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "logoUrl": { "type": "string" },
+                  "primaryColor": { "type": "string" },
+                  "secondaryColor": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Business updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Business" }
+              }
+            }
+          },
+          "400": { "description": "Validation error" },
+          "404": { "description": "Business not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Businesses"],
+        "summary": "Delete a business by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Business deleted" },
+          "404": { "description": "Business not found" }
+        }
+      }
+    },
+    "/public/businesses/{id}": {
+      "get": {
+        "tags": ["Businesses"],
+        "summary": "Get public business information",
+        "description": "Returns basic business information (name, logo) without requiring authentication",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public business information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "logoUrl": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Business not found" }
+        }
+      }
     }
   },
   "components": {
@@ -394,6 +611,47 @@
           "type": { "type": "string" },
           "isRead": { "type": "boolean" }
         }
+      },
+      "Theme": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "businessId": { "type": "integer", "example": 1 },
+          "primaryColor": { "type": "string", "example": "#4F46E5" },
+          "secondaryColor": { "type": "string", "example": "#6366F1" },
+          "backgroundColor": { "type": "string", "example": "#FFFFFF" },
+          "errorColor": { "type": "string", "example": "#EF4444" },
+          "textPrimaryColor": { "type": "string", "example": "#1F2937" },
+          "onPrimaryColor": { "type": "string", "example": "#FFFFFF" },
+          "fontFamily": { "type": "string", "example": "RobotoFlex" },
+          "fontSizeBody": { "type": "number", "example": 16 },
+          "fontSizeHeading": { "type": "number", "example": 24 },
+          "fontSizeCaption": { "type": "number", "example": 12 },
+          "fontWeightRegular": { "type": "number", "example": 400 },
+          "fontWeightBold": { "type": "number", "example": 700 },
+          "defaultPadding": { "type": "number", "example": 16 },
+          "defaultMargin": { "type": "number", "example": 8 },
+          "borderRadius": { "type": "number", "example": 12 },
+          "elevation": { "type": "number", "example": 4 },
+          "isActive": { "type": "boolean", "example": true },
+          "createdAt": { "type": "string", "format": "date-time", "example": "2025-07-04T05:30:00.000Z" },
+          "updatedAt": { "type": "string", "format": "date-time", "example": "2025-07-04T05:30:00.000Z" }
+        },
+        "required": ["primaryColor", "secondaryColor", "backgroundColor", "errorColor", "textPrimaryColor", "onPrimaryColor", "fontFamily", "fontSizeBody", "fontSizeHeading", "fontSizeCaption", "fontWeightRegular", "fontWeightBold", "defaultPadding", "defaultMargin", "borderRadius", "elevation"]
+      },
+      "Business": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "logoUrl": { "type": "string" },
+          "primaryColor": { "type": "string" },
+          "secondaryColor": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["name", "email"]
       }
     }
   }

@@ -194,18 +194,21 @@ const startServer = async () => {
     }
 };
 
-logger('🚀 About to start server...');
-startServer();
-logger('🚀 startServer() called - check if it executed properly');
+// Only start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+    logger('🚀 About to start server...');
+    startServer();
+    logger('🚀 startServer() called - check if it executed properly');
 
-// Fallback: If PORT is set, ensure server starts (for Railway)
-if (process.env.PORT) {
-    const port = process.env.PORT;
-    logger(`🔄 Fallback: Starting server on port ${port}...`);
-    app.listen(port, () => {
-        logger(`✅ FALLBACK: Server is running on port ${port}`);
-        logger(`✅ Health check available at: http://localhost:${port}/health`);
-    });
+    // Fallback: If PORT is set, ensure server starts (for Railway)
+    if (process.env.PORT) {
+        const port = process.env.PORT;
+        logger(`🔄 Fallback: Starting server on port ${port}...`);
+        app.listen(port, () => {
+            logger(`✅ FALLBACK: Server is running on port ${port}`);
+            logger(`✅ Health check available at: http://localhost:${port}/health`);
+        });
+    }
 }
 
 // Export the app for IIS

@@ -503,3 +503,106 @@ npm run build
 # Start the application
 npm start
 ```
+
+# Theme API Endpoints
+
+## Get Theme for a Business
+
+**GET** `/api/businesses/{id}/theme`
+
+**Response:**
+```json
+{
+  "primaryColor": "#4F46E5",
+  "secondaryColor": "#6366F1",
+  "backgroundColor": "#FFFFFF",
+  "errorColor": "#EF4444",
+  "textPrimaryColor": "#1F2937",
+  "onPrimaryColor": "#FFFFFF",
+  "fontFamily": "RobotoFlex",
+  "fontSizeBody": 16,
+  "fontSizeHeading": 24,
+  "fontSizeCaption": 12,
+  "fontWeightRegular": 400,
+  "fontWeightBold": 700,
+  "defaultPadding": 16,
+  "defaultMargin": 8,
+  "borderRadius": 12,
+  "elevation": 4,
+  "isActive": true
+}
+```
+
+## Create or Update Theme (Admin/Owner Only)
+
+**POST** `/api/businesses/{id}/theme`
+
+**Request Body:**
+```json
+{
+  "primaryColor": "#4F46E5",
+  "secondaryColor": "#6366F1",
+  "backgroundColor": "#FFFFFF",
+  "errorColor": "#EF4444",
+  "textPrimaryColor": "#1F2937",
+  "onPrimaryColor": "#FFFFFF",
+  "fontFamily": "RobotoFlex",
+  "fontSizeBody": 16,
+  "fontSizeHeading": 24,
+  "fontSizeCaption": 12,
+  "fontWeightRegular": 400,
+  "fontWeightBold": 700,
+  "defaultPadding": 16,
+  "defaultMargin": 8,
+  "borderRadius": 12,
+  "elevation": 4,
+  "isActive": true
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Theme created/updated successfully",
+  "theme": { ... }
+}
+```
+
+## Update Theme (Admin/Owner Only)
+
+**PUT** `/api/businesses/{id}/theme`
+
+**Request Body:** Same as POST
+
+**Response:**
+```json
+{
+  "message": "Theme updated successfully",
+  "theme": { ... }
+}
+```
+
+## Delete Theme (Admin/Owner Only)
+
+**DELETE** `/api/businesses/{id}/theme`
+
+**Response:**
+```json
+{
+  "message": "Theme deleted successfully",
+  "businessId": 1
+}
+```
+
+## Get Default Theme Template
+
+**GET** `/api/themes/default`
+
+**Response:**
+```json
+{
+  "message": "Default theme template",
+  "theme": { ... },
+  "note": "This is a template. Replace values with your business-specific theme data."
+}
+```

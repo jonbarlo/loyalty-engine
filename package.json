@@ -14,6 +14,8 @@
     "migrate:status": "ts-node src/scripts/migrate-status.ts",
     "migrate:undo": "ts-node src/scripts/migrate-undo.ts",
     "migrate:create": "ts-node src/scripts/create-migration.ts",
+    "seed": "ts-node src/scripts/run-all-seeds.ts",
+    "seed:all": "ts-node src/scripts/run-all-seeds.ts",
     "deploy:mochahost": "ts-node src/scripts/deploy-mochahost.ts",
     "postman": "ts-node src/scripts/convert-to-postman.ts",
     "test": "jest"

@@ -9,7 +9,7 @@ import PunchCard from '../models/PunchCardModel';
 import PointTransaction from '../models/PointTransactionModel';
 import bcrypt from 'bcryptjs';
 
-async function seed() {
+export async function seed() {
   // await sequelize.sync(); // Removed to avoid schema conflicts
 
   console.log('=== ALL ENVIRONMENT VARIABLES ===');
@@ -105,10 +105,12 @@ async function seed() {
   });
 
   console.log('🌱 Demo Starbucks seed data inserted successfully!');
-  process.exit(0);
 }
 
-seed().catch((err) => {
-  console.error('Seeder error:', err);
-  process.exit(1);
-}); 
+// For backward compatibility - allow running this file directly
+if (require.main === module) {
+  seed().catch((err) => {
+    console.error('Seeder error:', err);
+    process.exit(1);
+  });
+} 

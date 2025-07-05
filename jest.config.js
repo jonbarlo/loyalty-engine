@@ -14,5 +14,9 @@ module.exports = {
         'src/**/*.ts',
         '!src/**/*.spec.ts',
         '!src/**/*.test.ts'
-    ]
+    ],
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+    testTimeout: 10000,
+    forceExit: true,
+    detectOpenHandles: true
 };
