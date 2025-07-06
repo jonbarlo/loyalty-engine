@@ -20,6 +20,7 @@ import punchCardRouter from './routes/punchCards';
 import pointTransactionRouter from './routes/pointTransactions';
 import rewardRouter from './routes/rewards';
 import notificationRouter from './routes/notifications';
+import couponRouter from './routes/coupons';
 import swaggerUi from 'swagger-ui-express';
 import * as fs from 'fs';
 
@@ -128,7 +129,19 @@ app.use(punchCardRouter);
 app.use(pointTransactionRouter);
 app.use(rewardRouter);
 app.use(notificationRouter);
+app.use(couponRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
+
+// Log all registered routes for debugging
+if (app._router && app._router.stack) {
+  (app._router.stack as any[])
+    .filter((r: any) => r.route)
+    .forEach((r: any) => {
+      const route = r.route;
+      const methods = Object.keys(route.methods).join(', ').toUpperCase();
+      console.log(`[ROUTE] ${methods} ${route.path}`);
+    });
+}
 
 // Global error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

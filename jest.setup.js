@@ -1,3 +1,17 @@
+// Use Jest automock for sequelize
+jest.mock('sequelize');
+
+// Mock database connection for tests (MUST be first!)
+jest.mock('./src/config/database', () => ({
+  __esModule: true,
+  default: {
+    authenticate: jest.fn().mockResolvedValue(true),
+    sync: jest.fn().mockResolvedValue(true),
+    close: jest.fn().mockResolvedValue(true),
+    define: jest.fn(),
+  },
+}));
+
 // Jest setup file
 process.env.NODE_ENV = 'test';
 
@@ -11,16 +25,8 @@ global.console = {
   error: jest.fn(),
 };
 
-// Mock database connection for tests
-jest.mock('./src/config/database', () => ({
-  __esModule: true,
-  default: {
-    authenticate: jest.fn().mockResolvedValue(true),
-    sync: jest.fn().mockResolvedValue(true),
-    close: jest.fn().mockResolvedValue(true),
-    define: jest.fn(),
-  },
-}));
+// Import models to ensure they are initialized
+require('./src/models');
 
 // Mock all Sequelize models with proper methods
 const createMockModel = () => ({
@@ -70,6 +76,16 @@ jest.mock('./src/models/PointTransactionModel', () => ({
 }));
 
 jest.mock('./src/models/NotificationModel', () => ({
+  __esModule: true,
+  default: createMockModel(),
+}));
+
+jest.mock('./src/models/CouponModel', () => ({
+  __esModule: true,
+  default: createMockModel(),
+}));
+
+jest.mock('./src/models/CustomerCouponModel', () => ({
   __esModule: true,
   default: createMockModel(),
 }));

@@ -17,7 +17,8 @@
     { "name": "PunchCards", "description": "Punch card management" },
     { "name": "PointTransactions", "description": "Point transaction management" },
     { "name": "Rewards", "description": "Reward management" },
-    { "name": "Notifications", "description": "Notification management" }
+    { "name": "Notifications", "description": "Notification management" },
+    { "name": "Coupons", "description": "Coupon management" }
   ],
   "paths": {
     "/api-docs": {
@@ -516,6 +517,70 @@
           "404": { "description": "Business not found" }
         }
       }
+    },
+    "/coupons": {
+      "get": {
+        "tags": ["Coupons"],
+        "summary": "List all coupons for business",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of coupons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Coupon" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Coupons"],
+        "summary": "Create a new coupon",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CouponCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Coupon created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Coupon" }
+              }
+            }
+          },
+          "400": { "description": "Invalid input" }
+        }
+      }
+    },
+    "/my-coupons": {
+      "get": {
+        "tags": ["Coupons"],
+        "summary": "Get customer's active coupons",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "List of customer coupons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CustomerCoupon" }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -679,6 +744,59 @@
           "updatedAt": { "type": "string", "format": "date-time" }
         },
         "required": ["name", "email"]
+      },
+      "Coupon": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "businessId": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "discountType": { "type": "string", "enum": ["percentage", "fixed_amount"] },
+          "discountValue": { "type": "number" },
+          "minimumPurchase": { "type": "number" },
+          "maximumDiscount": { "type": "number" },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "totalQuantity": { "type": "integer" },
+          "usedQuantity": { "type": "integer" },
+          "perCustomerLimit": { "type": "integer" },
+          "isActive": { "type": "boolean" },
+          "couponCode": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["name", "discountType", "discountValue", "startDate", "endDate"]
+      },
+      "CouponCreate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "discountType": { "type": "string", "enum": ["percentage", "fixed_amount"] },
+          "discountValue": { "type": "number" },
+          "minimumPurchase": { "type": "number" },
+          "maximumDiscount": { "type": "number" },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "totalQuantity": { "type": "integer" },
+          "perCustomerLimit": { "type": "integer" }
+        },
+        "required": ["name", "discountType", "discountValue", "startDate", "endDate"]
+      },
+      "CustomerCoupon": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "customerId": { "type": "integer" },
+          "couponId": { "type": "integer" },
+          "status": { "type": "string", "enum": ["active", "redeemed", "expired"] },
+          "redeemedAt": { "type": "string", "format": "date-time" },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "coupon": { "$ref": "#/components/schemas/Coupon" }
+        }
       }
     }
   }
