@@ -462,6 +462,33 @@
         }
       }
     },
+    "/public/businesses": {
+      "get": {
+        "tags": ["Businesses"],
+        "summary": "Get all public businesses",
+        "description": "Returns basic information for all businesses (id, name, logo) without requiring authentication",
+        "responses": {
+          "200": {
+            "description": "List of public business information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "name": { "type": "string" },
+                      "logoUrl": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/public/businesses/{id}": {
       "get": {
         "tags": ["Businesses"],

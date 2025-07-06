@@ -5,7 +5,8 @@ import { authenticateToken } from '../middleware/auth';
 
 const businessRouter = Router();
 
-// Public endpoint - no authentication required
+// Public endpoints - no authentication required
+businessRouter.get('/public/businesses', BusinessController.getAllPublic);
 businessRouter.get('/public/businesses/:id', BusinessController.getPublicInfo);
 
 // Protected endpoints - authentication required

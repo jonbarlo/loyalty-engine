@@ -91,4 +91,69 @@ describe('BusinessController', () => {
       expect(mockJson).toHaveBeenCalledWith({ error: 'Internal server error' });
     });
   });
+
+  describe('getAllPublic', () => {
+    it('should return all public businesses', async () => {
+      const mockBusinesses = [
+        {
+          id: 1,
+          name: 'Test Business 1',
+          logoUrl: 'https://example.com/logo1.png'
+        },
+        {
+          id: 2,
+          name: 'Test Business 2',
+          logoUrl: 'https://example.com/logo2.png'
+        }
+      ];
+
+      MockedBusiness.findAll.mockResolvedValue(mockBusinesses as any);
+
+      mockRequest = {};
+
+      await BusinessController.getAllPublic(
+        mockRequest as Request,
+        mockResponse as Response,
+        jest.fn()
+      );
+
+      expect(MockedBusiness.findAll).toHaveBeenCalledWith({
+        attributes: ['id', 'name', 'logoUrl']
+      });
+      expect(mockJson).toHaveBeenCalledWith(mockBusinesses);
+    });
+
+    it('should return empty array when no businesses exist', async () => {
+      MockedBusiness.findAll.mockResolvedValue([]);
+
+      mockRequest = {};
+
+      await BusinessController.getAllPublic(
+        mockRequest as Request,
+        mockResponse as Response,
+        jest.fn()
+      );
+
+      expect(MockedBusiness.findAll).toHaveBeenCalledWith({
+        attributes: ['id', 'name', 'logoUrl']
+      });
+      expect(mockJson).toHaveBeenCalledWith([]);
+    });
+
+    it('should return 500 when database error occurs', async () => {
+      const error = new Error('Database connection failed');
+      MockedBusiness.findAll.mockRejectedValue(error);
+
+      mockRequest = {};
+
+      await BusinessController.getAllPublic(
+        mockRequest as Request,
+        mockResponse as Response,
+        jest.fn()
+      );
+
+      expect(mockStatus).toHaveBeenCalledWith(500);
+      expect(mockJson).toHaveBeenCalledWith({ error: 'Internal server error' });
+    });
+  });
 }); 
